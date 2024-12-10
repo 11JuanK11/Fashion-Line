@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,12 +37,12 @@ public class ProductController {
 
     @GetMapping("/name/{name}")
     public ResponseEntity<?> getProductByName(@PathVariable String name) {
-        Optional<Product> productByName = productService.findByName(name);
-        return ResponseEntity.ok(productByName);
+        Optional<List<Product>> productByName = productService.findByName(name);
+        return ResponseEntity.ok(productByName.get());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductByName(@PathVariable Long id) {
+    public ResponseEntity<?> getProductById(@PathVariable Long id) {
         Optional<Product> productById = productService.findById(id);
         return ResponseEntity.ok(productById);
     }
@@ -58,7 +57,7 @@ public class ProductController {
     public ResponseEntity<?> insertProduct(@RequestBody Product product) {
         try {
             Product newProduct = productService.create(product);
-            return ResponseEntity.ok(newProduct);
+            return new ResponseEntity<>(newProduct, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("message", "An unexpected error occurred."));
         }
@@ -67,8 +66,8 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Product product) {
         try {
-            Product updatedTreatment = productService.update(product, id);
-            return new ResponseEntity<>(updatedTreatment, HttpStatus.OK);
+            Product updatedProduct = productService.update(product, id);
+            return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>("An error occurred while updating the product.", HttpStatus.INTERNAL_SERVER_ERROR);
         }

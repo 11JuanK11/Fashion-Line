@@ -34,8 +34,8 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public Optional<Product> findByName(String name) throws RuntimeException {
-        Optional<Product> productExist = productsRepository.findByName(name);
+    public Optional<List<Product>> findByName(String name) throws RuntimeException {
+        Optional<List<Product>> productExist = productsRepository.findByName(name);
 
         if(productExist.isEmpty()){
             throw new UnsupportedOperationException("Product not found by name:" + name);
@@ -69,7 +69,7 @@ public class ProductService implements IProductService{
             productUpdate.setSize(product.getSize());
             productUpdate.setCategory(product.getCategory());
             productUpdate.setStock(product.getStock());
-            productUpdate.setCategory(product.getCategory());
+            productUpdate.setDescription(product.getDescription());
 
             return productsRepository.save(productUpdate);
         }
