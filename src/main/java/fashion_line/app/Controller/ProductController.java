@@ -42,6 +42,12 @@ public class ProductController {
         return ResponseEntity.ok(productByName);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProductByName(@PathVariable Long id) {
+        Optional<Product> productById = productService.findById(id);
+        return ResponseEntity.ok(productById);
+    }
+
     @GetMapping("/category/{category}")
     public ResponseEntity<?> getProductByCategory(@PathVariable String category) {
         Optional<List<Product>> allProductsByCategory = productService.findByCategory(category);

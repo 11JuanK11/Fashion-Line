@@ -38,7 +38,7 @@ public class ProductService implements IProductService{
         Optional<Product> productExist = productsRepository.findByName(name);
 
         if(productExist.isEmpty()){
-            throw new UnsupportedOperationException("Product not found for by name:" + name);
+            throw new UnsupportedOperationException("Product not found by name:" + name);
         } else {
             return productExist;
         }
@@ -49,7 +49,7 @@ public class ProductService implements IProductService{
         Optional<List<Product>> productExist = productsRepository.findByCategory(category);
 
         if(productExist.isEmpty()){
-            throw new UnsupportedOperationException("Products not found for by category:" + category);
+            throw new UnsupportedOperationException("Products not found by category:" + category);
         } else {
             return productExist;
         }
@@ -60,7 +60,7 @@ public class ProductService implements IProductService{
         Optional<Product> productExist = productsRepository.findById(id);
 
         if(productExist.isEmpty()){
-            throw new UnsupportedOperationException("Product not found for by id:" + id);
+            throw new UnsupportedOperationException("Product not found by id:" + id);
         } else {
             Product productUpdate = productExist.get();
 
@@ -93,6 +93,16 @@ public class ProductService implements IProductService{
                     
                 throw new RuntimeException("Existing product");
             }         
+        }
+    }
+
+    @Override
+    public Optional<Product> findById(Long id) throws RuntimeException {
+        Optional<Product> productExist = productsRepository.findById(id);
+        if(productExist.isEmpty()){
+            throw new UnsupportedOperationException("Product not found by id:" + id);
+        } else {
+            return productExist;
         }
     }
     
