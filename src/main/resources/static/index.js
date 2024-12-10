@@ -12,7 +12,6 @@ async function fetchProducts() {
     }
 }
 
-
 function populateTable(products) {
     const tableBody = document.getElementById('productTableBody');
     tableBody.innerHTML = '';
@@ -27,16 +26,14 @@ function populateTable(products) {
             <td>${product.category}</td>
             <td>
                 <button class="btn btn-warning" style="background-color: #95BDFF; border: none;"
-                    onclick="edit(${product.id})">Edit</button>
+                    onclick="editProduct(${product.id})">Edit</button>
                 <button class="btn btn-danger" style="background-color: #F7C8E0; border: none;"
-                    onclick="delete(${product.id})">Delete</button>
+                    onclick="deleteProduct(${product.id})">Delete</button>
             </td>
         `;
         tableBody.appendChild(row);
     });
-
 }
-
 
 function showMessage(message) {
     const messageDiv = document.getElementById('message');
@@ -44,17 +41,13 @@ function showMessage(message) {
     messageDiv.classList.remove('d-none');
 }
 
-
 function hideMessage() {
     const messageDiv = document.getElementById('message');
     messageDiv.classList.add('d-none');
 }
 
-
-async function searchProducts() {
+async function searchProductsByName() {
     const name = document.getElementById('nameSelect').value;
-    const category = document.getElementById('categorySelect').value;
-    
 
     if (name) {
         const response = await fetch(`/products/name/${name}`);
@@ -69,9 +62,19 @@ async function searchProducts() {
             }
         } else {
             populateTable([]);
-            showMessage(`Error fetching products by category.`);
+            showMessage(`Error fetching products by name.`);
         }
-    } else if (category) {
+  
+    } else {
+        fetchProducts();
+        hideMessage();
+    }
+}
+
+async function searchProductsByCategory() {
+    const category = document.getElementById('categorySelect').value;
+
+    if (category) {
         const response = await fetch(`/products/category/${category}`);
         if (response.ok) {
             const products = await response.json();
@@ -92,9 +95,54 @@ async function searchProducts() {
     }
 }
 
-
 window.onload = fetchProducts;
 
+const nameSelect = document.getElementById('nameSelect');
+const categorySelect = document.getElementById('categorySelect');
 
-document.getElementById('nameSelect').addEventListener('input', searchProducts);
-document.getElementById('categorySelect').addEventListener('input', searchProducts);
+nameSelect.addEventListener('input', () => {
+    categorySelect.value = '';
+    searchProductsByName();
+});
+
+categorySelect.addEventListener('input', () => {
+    nameSelect.value = '';
+    searchProductsByCategory();
+});
+
+
+function deleteProduct(id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to recover this product!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/products/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    fetchProducts();
+                    Swal.fire('Deleted!', 'Product has been deleted.', 'success');
+                } else {
+                    throw new Error('Error deleting product.');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting veterinary:', error);
+                Swal.fire('Error', error.message, 'error');
+            });
+        }
+    });
+}
+
+function editProduct(id) {
+    localStorage.setItem('productIdToEdit', id);
+    window.location.href = 'http://localhost:8080/edit';
+}
