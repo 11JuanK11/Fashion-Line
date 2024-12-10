@@ -18,38 +18,68 @@ public class ProductService implements IProductService{
 
     @Override
     public Product create(Product product) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'create'");
+        if(product == null){
+            throw new UnsupportedOperationException("Product information is missing");
+        }
+        
+        return productsRepository.save(product);
     }
 
     @Override
     public List<Product> findAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+        return productsRepository.findAll();
     }
 
     @Override
     public Optional<Product> findByName(String name) throws RuntimeException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findByName'");
+        Optional<Product> productExist = productsRepository.findByName(name);
+
+        if(productExist.isEmpty()){
+            throw new UnsupportedOperationException("Product not found for by name:" + name);
+        } else {
+            return productExist;
+        }
     }
 
     @Override
-    public Optional<Product> findByCategory(String category) throws RuntimeException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findByCategory'");
+    public Optional<List<Product>> findByCategory(String category) throws RuntimeException {
+        Optional<List<Product>> productExist = productsRepository.findByCategory(category);
+
+        if(productExist.isEmpty()){
+            throw new UnsupportedOperationException("Products not found for by category:" + category);
+        } else {
+            return productExist;
+        }
     }
 
     @Override
     public Product update(Product product, Long id) throws RuntimeException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        Optional<Product> productExist = productsRepository.findById(id);
+
+        if(productExist.isEmpty()){
+            throw new UnsupportedOperationException("Product not found for by id:" + id);
+        } else {
+            Product productUpdate = productExist.get();
+
+            productUpdate.setName(product.getName());
+            productUpdate.setPrice(product.getPrice());
+            productUpdate.setSize(product.getSize());
+            productUpdate.setCategory(product.getCategory());
+            productUpdate.setStock(product.getStock());
+            productUpdate.setCategory(product.getCategory());
+
+            return productsRepository.save(productUpdate);
+        }
     }
 
     @Override
     public void delete(Long id) throws RuntimeException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        
+        if(!productsRepository.existsById(id)){
+            throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        }
+        
+        productsRepository.deleteById(id);
     }
     
 }
