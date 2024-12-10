@@ -35,7 +35,6 @@ function validateForm() {
 }
 
 function loadProductData(id) {
-    id = 1733856492347
     fetch(`/products/${id}`)
         .then(response => {
             if (!response.ok) throw new Error('Error loading product data');
@@ -54,7 +53,6 @@ function loadProductData(id) {
 }
 
 function updateProduct(id) {
-    id = 1733856492347
     const updatedProduct = {
         name: document.getElementById('productName').value.trim(),
         size: document.getElementById('productSize').value.trim(),
@@ -79,8 +77,8 @@ function updateProduct(id) {
                 icon: 'success',
                 confirmButtonText: 'OK'
             }).then(() => {
-                //localStorage.removeItem('productIdToEdit');
-                //window.location.href = 'http://localhost:8080/';
+                localStorage.removeItem('productIdToEdit');
+                window.location.href = 'http://localhost:8080/';
             });
         })
         .catch(error => {
