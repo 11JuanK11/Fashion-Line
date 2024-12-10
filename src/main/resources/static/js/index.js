@@ -5,12 +5,31 @@ async function fetchProducts() {
             throw new Error('Network response was not ok');
         }
         const products = await response.json();
+        checkLowStock(products); 
         populateTable(products);
         hideMessage();
     } catch (error) {
         console.error('Error fetching products:', error);
     }
 }
+
+
+function checkLowStock(products) {
+    const lowStockProducts = products.filter(product => product.stock <= 5);
+    if (lowStockProducts.length > 0) {
+        const productDetails = lowStockProducts
+            .map(product => `${product.name}: ${product.stock} available`)
+            .join('<br>'); 
+
+        Swal.fire({
+            title: 'Low Stock Alert!',
+            html: `<div style="text-align: center;">${productDetails}</div>`, 
+            icon: 'warning',
+            confirmButtonText: 'Ok',
+        });
+    }
+}
+
 
 function populateTable(products) {
     const tableBody = document.getElementById('productTableBody');
@@ -27,10 +46,14 @@ function populateTable(products) {
             <td>
                 <button class="btn btn-warning" style="background-color: #95BDFF; border: none;"
                     onclick="editProduct(${product.id})">Edit</button>
-                <button class="btn btn-danger" style="background-color: #F7C8E0; border: none;"
+                <button class="btn btn-danger" style="background-color: #e44040; border: none;"
                     onclick="deleteProduct(${product.id})">Delete</button>
             </td>
         `;
+        
+        if (product.stock <= 5) {
+            row.classList.add('table-danger');
+        }
         tableBody.appendChild(row);
     });
 }
@@ -46,71 +69,7 @@ function hideMessage() {
     messageDiv.classList.add('d-none');
 }
 
-async function searchProductsByName() {
-    const name = document.getElementById('nameSelect').value;
-
-    if (name) {
-        const response = await fetch(`/products/name/${name}`);
-        if (response.ok) {
-            const products = await response.json();
-            if (products.length > 0) {
-                populateTable(products);
-                hideMessage();
-            } else {
-                populateTable([]);
-                showMessage(`No products found with name: ${name}`);
-            }
-        } else {
-            populateTable([]);
-            showMessage(`Error fetching products by name.`);
-        }
-  
-    } else {
-        fetchProducts();
-        hideMessage();
-    }
-}
-
-async function searchProductsByCategory() {
-    const category = document.getElementById('categorySelect').value;
-
-    if (category) {
-        const response = await fetch(`/products/category/${category}`);
-        if (response.ok) {
-            const products = await response.json();
-            if (products.length > 0) {
-                populateTable(products);
-                hideMessage();
-            } else {
-                populateTable([]);
-                showMessage(`No products found with the category: ${category}`);
-            }
-        } else {
-            populateTable([]);
-            showMessage(`Error fetching products by category.`);
-        }
-    } else {
-        fetchProducts();
-        hideMessage();
-    }
-}
-
-window.onload = fetchProducts;
-
-const nameSelect = document.getElementById('nameSelect');
-const categorySelect = document.getElementById('categorySelect');
-
-nameSelect.addEventListener('input', () => {
-    categorySelect.value = '';
-    searchProductsByName();
-});
-
-categorySelect.addEventListener('input', () => {
-    nameSelect.value = '';
-    searchProductsByCategory();
-});
-
-
+// Función para eliminar un producto con confirmación
 function deleteProduct(id) {
     Swal.fire({
         title: 'Are you sure?',
@@ -135,14 +94,24 @@ function deleteProduct(id) {
                 }
             })
             .catch(error => {
-                console.error('Error deleting veterinary:', error);
+                console.error('Error deleting product:', error);
                 Swal.fire('Error', error.message, 'error');
             });
         }
     });
 }
 
+// Función para editar un producto
 function editProduct(id) {
     localStorage.setItem('productIdToEdit', id);
     window.location.href = 'http://localhost:8080/edit';
 }
+
+// Redirigir para añadir un producto
+document.getElementById('addProduct').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = 'http://localhost:8080/add';
+});
+
+// Inicializar carga de productos
+window.onload = fetchProducts;

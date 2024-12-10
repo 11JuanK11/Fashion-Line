@@ -17,5 +17,8 @@ public class IndexController {
         return "editProduct";
     }
     
-
+    @GetMapping("/add")
+    public String getAddProductsPage() {
+        return "addProduct";
+    }
 }

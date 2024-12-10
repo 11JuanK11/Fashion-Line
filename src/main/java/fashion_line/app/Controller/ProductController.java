@@ -57,7 +57,7 @@ public class ProductController {
     public ResponseEntity<?> insertProduct(@RequestBody Product product) {
         try {
             Product newProduct = productService.create(product);
-            return ResponseEntity.ok(newProduct);
+            return new ResponseEntity<>(newProduct, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("message", "An unexpected error occurred."));
         }
@@ -66,8 +66,8 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Product product) {
         try {
-            Product updatedTreatment = productService.update(product, id);
-            return new ResponseEntity<>(updatedTreatment, HttpStatus.OK);
+            Product updatedProduct = productService.update(product, id);
+            return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>("An error occurred while updating the product.", HttpStatus.INTERNAL_SERVER_ERROR);
         }

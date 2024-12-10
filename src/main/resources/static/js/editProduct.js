@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     let productId = localStorage.getItem('productIdToEdit');
-    productId = 1733856492347
     if (productId) {
         loadProductData(productId);
     }
