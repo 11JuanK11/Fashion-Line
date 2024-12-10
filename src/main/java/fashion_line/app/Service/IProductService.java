@@ -9,7 +9,7 @@ public interface IProductService {
     public Product create(Product product);
     public List<Product> findAll();
     public Optional<Product> findByName(String name)  throws RuntimeException;
-    public Optional<Product> findByCategory(String category)  throws RuntimeException;
+    public Optional<List<Product>> findByCategory(String category)  throws RuntimeException;
     public Product update(Product product, Long id)  throws RuntimeException;
     public void delete(Long id) throws RuntimeException;
 }
