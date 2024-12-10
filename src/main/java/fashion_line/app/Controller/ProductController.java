@@ -31,19 +31,19 @@ public class ProductController {
     private IProductService productService;
 
     @GetMapping("/")
-    public ResponseEntity<?> getAllProducts(@RequestParam String param) {
+    public ResponseEntity<?> getAllProducts() {
         List<Product> allProducts = productService.findAll();
         return ResponseEntity.ok(allProducts);
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<?> getProductByName(@RequestParam String name) {
+    @GetMapping("/name/{name}")
+    public ResponseEntity<?> getProductByName(@PathVariable String name) {
         Optional<Product> productByName = productService.findByName(name);
         return ResponseEntity.ok(productByName);
     }
 
-    @GetMapping("/{category}")
-    public ResponseEntity<?> getProductByCategory(@RequestParam String category) {
+    @GetMapping("/category/{category}")
+    public ResponseEntity<?> getProductByCategory(@PathVariable String category) {
         Optional<List<Product>> allProductsByCategory = productService.findByCategory(category);
         return ResponseEntity.ok(allProductsByCategory.get());
     }

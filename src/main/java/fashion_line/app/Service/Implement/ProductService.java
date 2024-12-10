@@ -1,5 +1,6 @@
 package fashion_line.app.Service.Implement;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ public class ProductService implements IProductService{
         if(product == null){
             throw new UnsupportedOperationException("Product information is missing");
         }
-        
+        product.setId(Calendar.getInstance().getTimeInMillis());
         return productsRepository.save(product);
     }
 
