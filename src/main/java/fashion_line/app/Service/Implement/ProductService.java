@@ -22,6 +22,8 @@ public class ProductService implements IProductService{
         if(product == null){
             throw new UnsupportedOperationException("Product information is missing");
         }
+
+        checkExistence(product);
         product.setId(Calendar.getInstance().getTimeInMillis());
         return productsRepository.save(product);
     }
@@ -81,6 +83,17 @@ public class ProductService implements IProductService{
         }
         
         productsRepository.deleteById(id);
+    }
+
+    
+    private void checkExistence(Product product) throws RuntimeException{
+        for (Product products: findAll()){
+            if(products.getName().equalsIgnoreCase(product.getName()) && products.getSize().equalsIgnoreCase(product.getSize()) 
+                && products.getCategory().equalsIgnoreCase(product.getCategory())){
+                    
+                throw new RuntimeException("Existing product");
+            }         
+        }
     }
     
 }
